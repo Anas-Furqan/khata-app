@@ -1,54 +1,62 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Supplier;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SupplierController extends Controller
 {
-    public function index() {
-        $suppliers = Supplier::latest()->get();
-        return Inertia::render('Admin/Suppliers/Index', ['suppliers' => $suppliers]);
+    public function index()
+    {
+        return Inertia::render('Admin/Suppliers/Index', [
+            'suppliers' => Supplier::all(),
+        ]);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $request->validate([
-            'name' => 'required|string',
-            'phone' => 'nullable|string',
-            'company' => 'nullable|string',
-            'address' => 'nullable|string',
+            'name'  => 'required',
+            'phone' => 'required',
         ]);
 
         Supplier::create($request->all());
+
+        return back()->with('success', 'Supplier added successfully!');
     }
 
-    public function update(Request $request, Supplier $supplier) {
-        $request->validate([
-            'name' => 'required|string',
-            'phone' => 'nullable|string',
-            'company' => 'nullable|string',
-            'address' => 'nullable|string',
-        ]);
-
+    public function update(Request $request, Supplier $supplier)
+    {
         $supplier->update($request->all());
+
+        return back()->with('success', 'Supplier updated successfully!');
     }
 
-    public function destroy(Supplier $supplier) {
+    public function destroy(Supplier $supplier)
+    {
         $supplier->delete();
+        return back()->with('success', 'Supplier moved to trash!');
     }
 
-    public function trash() {
-        $suppliers = Supplier::onlyTrashed()->latest()->get();
-        return Inertia::render('Admin/Suppliers/Trash', ['suppliers' => $suppliers]);
-    }
+    public function trash()
+    {
+        $trashed = Supplier::onlyTrashed()->get();
 
-    public function restore($id) {
+        return Inertia::render('Admin/Suppliers/Trash', [
+            'trashed' => $trashed,
+        ]);                   
+    }   
+
+    public function restore($id)
+    {
         Supplier::withTrashed()->findOrFail($id)->restore();
+        return back()->with('success', 'Supplier restored successfully!');
     }
 
-    public function forceDelete($id) {
+    public function forceDelete($id)
+    {
         Supplier::withTrashed()->findOrFail($id)->forceDelete();
+        return back()->with('success', 'Supplier permanently deleted!');
     }
 }

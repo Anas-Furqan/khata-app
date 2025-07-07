@@ -9,7 +9,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\SupplierBillController;
+use App\Http\Controllers\SupplierPurchaseController;
+use App\Http\Controllers\SupplierDashboardController;
+use App\Http\Controllers\SupplierLedgerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -99,9 +101,25 @@ Route::prefix('adminpanel/suppliers')->name('admin.suppliers.')->group(function 
     Route::delete('/{supplier}', [SupplierController::class, 'destroy'])->name('destroy');
 
     Route::get('/trash', [SupplierController::class, 'trash'])->name('trash');
-    Route::post('/{id}/restore', [SupplierController::class, 'restore'])->name('restore');
+    Route::put('/{id}/restore', [SupplierController::class, 'restore'])->name('restore');
     Route::delete('/{id}/force', [SupplierController::class, 'forceDelete'])->name('force');
 });
 
-Route::get('/adminpanel/suppliers/bills/create', [SupplierBillController::class, 'create'])->name('admin.supplierbills.create');
-Route::post('/adminpanel/suppliers/bills', [SupplierBillController::class, 'store'])->name('admin.supplierbills.store');
+
+// Supplier Purchase Routes
+Route::get('/adminpanel/suppliers/purchases/create', [SupplierPurchaseController::class, 'create'])->name('admin.suppliers.purchases.create');
+Route::post('/adminpanel/suppliers/purchases', [SupplierPurchaseController::class, 'store'])->name('admin.suppliers.purchases.store');
+Route::get('/adminpanel/suppliers/purchases/{purchase}', [SupplierPurchaseController::class, 'show'])->name('admin.suppliers.purchases.show');
+Route::get('/adminpanel/suppliers/purchases/history', [SupplierPurchaseController::class, 'history'])->name('admin.suppliers.purchases.history');
+Route::get('/adminpanel/suppliers/purchases/{purchase}/download', [SupplierPurchaseController::class, 'download'])->name('admin.supplier.purchases.download');
+
+
+Route::prefix('adminpanel/suppliers/ledger')->name('admin.suppliers.ledger.')->group(function () {
+    Route::get('/', [SupplierLedgerController::class, 'index'])->name('index');
+    Route::get('/{supplier}', [SupplierLedgerController::class, 'show'])->name('show');
+    Route::post('/', [SupplierLedgerController::class, 'store'])->name('store');
+    Route::get('/{supplier}/download', [SupplierLedgerController::class, 'download'])->name('download');
+});
+
+Route::get('/adminpanel/suppliers/dashboard', [SupplierDashboardController::class, 'index'])->name('admin.suppliers.dashboard');
+

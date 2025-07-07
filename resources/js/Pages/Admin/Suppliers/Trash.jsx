@@ -1,16 +1,17 @@
-import React from 'react'
-import { router, Link } from '@inertiajs/react'
 import AdminSidebar from '@/Components/AdminSidebar'
-import { RotateCw, Trash2 } from 'lucide-react'
+import { ArrowLeftCircle, Trash2, RotateCw } from 'lucide-react'
+import { router } from '@inertiajs/react'
 
-export default function Trash({ suppliers }) {
+export default function SupplierTrash({ trashed }) {
   const restore = (id) => {
-    router.post(route('admin.suppliers.restore', id))
+    if (confirm('Restore this supplier?')) {
+      router.put(route('admin.suppliers.restore', id))
+    }
   }
 
   const forceDelete = (id) => {
-    if (confirm('Are you sure? This will permanently delete!')) {
-      router.delete(route('admin.suppliers.force', id))
+    if (confirm('Permanently delete this supplier? This cannot be undone.')) {
+      router.delete(route('admin.suppliers.forceDelete', id))
     }
   }
 
@@ -18,52 +19,46 @@ export default function Trash({ suppliers }) {
     <div className="flex">
       <AdminSidebar />
       <div className="ml-64 w-full p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Deleted Suppliers</h1>
-          <Link
-            href={route('admin.suppliers.index')}
-            className="text-sm text-blue-700"
-          >
-            ← Back to List
-          </Link>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Trashed Suppliers</h1>
+          <a href={route('admin.suppliers.index')} className="text-blue-600 hover:underline flex items-center">
+            <ArrowLeftCircle size={18} className="mr-1" /> Back to List
+          </a>
         </div>
 
-        <div className="bg-white shadow rounded">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-100">
+        <div className="overflow-x-auto bg-white rounded shadow">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-100 text-gray-700">
               <tr>
-                <th className="p-3">#</th>
-                <th className="p-3">Name</th>
-                <th className="p-3">Phone</th>
-                <th className="p-3">Company</th>
-                <th className="p-3">Address</th>
-                <th className="p-3 text-right">Actions</th>
+                <th className="px-4 py-2 text-left">Name</th>
+                <th className="px-4 py-2 text-left">Phone</th>
+                <th className="px-4 py-2 text-left">Company</th>
+                <th className="px-4 py-2 text-left">Address</th>
+                <th className="px-4 py-2 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {suppliers.map((s, i) => (
-                <tr key={s.id} className="border-t hover:bg-gray-50">
-                  <td className="p-3">{i + 1}</td>
-                  <td className="p-3">{s.name}</td>
-                  <td className="p-3">{s.phone}</td>
-                  <td className="p-3">{s.company}</td>
-                  <td className="p-3">{s.address}</td>
-                  <td className="p-3 text-right space-x-2">
-                    <button
-                      onClick={() => restore(s.id)}
-                      className="text-green-600"
-                    >
+              {trashed.map((supplier) => (
+                <tr key={supplier.id} className="border-t hover:bg-gray-50">
+                  <td className="px-4 py-2">{supplier.name}</td>
+                  <td className="px-4 py-2">{supplier.phone}</td>
+                  <td className="px-4 py-2">{supplier.company}</td>
+                  <td className="px-4 py-2">{supplier.address}</td>
+                  <td className="px-4 py-2 text-center space-x-2">
+                    <button onClick={() => restore(supplier.id)} className="text-green-600 hover:underline">
                       <RotateCw size={16} />
                     </button>
-                    <button
-                      onClick={() => forceDelete(s.id)}
-                      className="text-red-600"
-                    >
+                    <button onClick={() => forceDelete(supplier.id)} className="text-red-600 hover:underline">
                       <Trash2 size={16} />
                     </button>
                   </td>
                 </tr>
               ))}
+              {trashed.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="text-center text-gray-500 py-4">No trashed suppliers.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

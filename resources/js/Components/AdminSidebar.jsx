@@ -80,16 +80,16 @@ export default function AdminSidebar() {
           <span className="flex items-center gap-2">
             <Users size={18} /> Suppliers
           </span>
-          {supplierOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          {supplierOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </button>
-
         {supplierOpen && (
-          <div className="ml-4 mt-2 space-y-1">
+          <div className="ml-6 mt-2 space-y-1 text-sm">
             <Link href="/adminpanel/suppliers" className={linkClass}>Supplier List</Link>
             <Link href="/adminpanel/suppliers/trash" className={linkClass}>Trash</Link>
-            <Link href="/adminpanel/suppliers/purchase-bill" className={linkClass}>Purchase Bills</Link>
+            <Link href="/adminpanel/suppliers/purchases/create" className={linkClass}>Generate Purchase Bill</Link>
+            <Link href="/adminpanel/suppliers/purchases/history" className={linkClass}>Bill History</Link>
             <Link href="/adminpanel/suppliers/ledger" className={linkClass}>Ledger</Link>
-            <Link href="/adminpanel/suppliers/history" className={linkClass}>Purchase History</Link>
+            <Link href="/adminpanel/suppliers/dashboard" className={linkClass}>Dashboard</Link>
           </div>
         )}
       </div>
